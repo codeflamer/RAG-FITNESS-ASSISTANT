@@ -1,0 +1,7 @@
+tqdm
+minsearch
+scikit-learn 
+pandas
+mistralai
+flask
+hyperopt
