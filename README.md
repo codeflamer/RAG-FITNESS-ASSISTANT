@@ -102,9 +102,9 @@ docker build -t fitness-buddy .
 
 docker run -t  \
  -e MISTRAL_KEY=${MISTRAL_KEY} \
- -e DATA_PATH="data/data_unclean.csv"
- -p 8000:8000
-fitness-buddy
+ -e DATA_PATH="data/data_unclean.csv" \
+ -p 8000:8000 \
+ fitness-buddy
 
 
 # docker run -t -e MISTRAL_KEY=%MISTRAL_KEY% -e DATA_PATH=data/data_unclean.csv -p 8000:8000 fitness-buddy

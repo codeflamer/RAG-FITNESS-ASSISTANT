@@ -14,8 +14,8 @@ tz = ZoneInfo(TZ_INFO)
 def get_db_connection():
     try:
         conn = psycopg2.connect(
-            # host=os.getenv("POSTGRES_HOST", "localhost"),
-            host="localhost",
+            host=os.getenv("POSTGRES_HOST", "localhost"),
+            # host="localhost",
             port=int(os.getenv("POSTGRES_PORT", 5434)),
             database=os.getenv("POSTGRES_DB","your_database"),
             user=os.getenv("POSTGRES_USER", "username"),
