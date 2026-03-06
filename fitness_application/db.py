@@ -16,7 +16,7 @@ def get_db_connection():
         conn = psycopg2.connect(
             host=os.getenv("POSTGRES_HOST", "localhost"),
             # host="localhost",
-            port=int(os.getenv("POSTGRES_PORT", 5434)),
+            port=int(os.getenv("POSTGRES_PORT", 5432)),
             database=os.getenv("POSTGRES_DB","your_database"),
             user=os.getenv("POSTGRES_USER", "username"),
             password=os.getenv("POSTGRES_PASSWORD", "password"),
@@ -75,14 +75,15 @@ def save_conversation(conversation_id, question, answer_data, timestamp=None):
 
     conn = get_db_connection()
     try:
+                # relevance, relevance_explanation, prompt_tokens, completion_tokens, total_tokens, 
+                # eval_prompt_tokens, eval_completion_tokens, eval_total_tokens, mistralai_cost, timestamp
+                # %s, %s, %s, %s, %s, %s, %s, %s, %s, %s
         with conn.cursor() as cur:
             cur.execute(
                 """
                 INSERT INTO conversations 
-                (id, question, answer, model_used, response_time, relevance, 
-                relevance_explanation, prompt_tokens, completion_tokens, total_tokens, 
-                eval_prompt_tokens, eval_completion_tokens, eval_total_tokens, mistralai_cost, timestamp)
-                VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+                (id, question, answer, model_used, response_time)
+                VALUES (%s, %s, %s, %s, %s)
                 """,
                 (
                     conversation_id,

@@ -1,4 +1,4 @@
-id,exercise_name,type_of_activity,type_of_equipment,body_part,type,muscle_groups_activated,instructions
+,Exercise Name,Type of Activity,Type of Equipment,Body Part,Type,Muscle Groups Activated,Instructions
 0,Push-Ups,Strength,Bodyweight,Upper Body,Push,"Pectorals, Triceps, Deltoids",Start in a high plank position with your hands under your shoulders. Lower your body until your chest nearly touches the floor. Push back up to the starting position.
 1,Squats,Strength,Bodyweight,Lower Body,Push,"Quadriceps, Glutes, Hamstrings","Stand with feet shoulder-width apart. Lower your body as if sitting back into a chair, keeping your chest up. Return to standing."
 2,Plank,Strength/Mobility,Bodyweight,Core,Hold,"Rectus Abdominis, Transverse Abdominis",Start in a forearm plank position with your elbows directly under your shoulders. Keep your body in a straight line from head to heels.
@@ -184,8 +184,10 @@ id,exercise_name,type_of_activity,type_of_equipment,body_part,type,muscle_groups
 182,Dumbbell Bent-Over Row,Strength,Dumbbells,Upper Body,Pull,"Latissimus Dorsi, Biceps","Stand with feet shoulder-width apart, bend forward at the hips, and row the dumbbells towards your torso."
 183,Lateral Lunge,Strength,Bodyweight,Lower Body,Push,"Quadriceps, Glutes, Adductors","Step out to the side, bending one knee while keeping the other leg straight. Push back to the starting position."
 184,Seated Machine Row,Strength,Machine,Upper Body,Pull,"Latissimus Dorsi, Biceps","Sit at a rowing machine with feet braced. Pull the handles towards your torso, then slowly return to the starting position."
+185,Ab Wheel Rollout,Strength,Ab Wheel,Core,Push,"Rectus Abdominis, Hip Flexors","Kneel on the floor with an ab wheel in front of you. Roll the wheel forward while keeping your core tight, then roll back."
 186,Decline Russian Twist,Strength,Bodyweight,Core,Twist,"Obliques, Rectus Abdominis","Sit on a decline bench with your knees bent. Twist your torso to each side, tapping your hands on the floor."
 187,Deadlift High Pull,Strength,Barbell,Full Body,Pull,"Glutes, Hamstrings, Shoulders","Start with a barbell on the ground, perform a deadlift, and as you stand up, pull the barbell up towards your chest."
+188,Smith Machine Incline Press,Strength,Smith Machine,Upper Body,Push,"Pectorals, Triceps, Deltoids","Lie on an incline bench under a Smith machine bar. Press the bar up and together over your chest, then lower it back down."
 189,Reverse Grip Lat Pulldown,Strength,Cable Machine,Upper Body,Pull,"Latissimus Dorsi, Biceps","Sit at a lat pulldown machine with a reverse grip. Pull the bar down to your chest, then slowly return to the starting position."
 190,Cable Lateral Lunge,Strength,Cable Machine,Lower Body,Push,"Quadriceps, Glutes, Adductors","Attach a handle to a low pulley and stand to the side of the cable machine. Step out into a side lunge, then return to the starting position."
 191,Pike Push-Up,Strength,Bodyweight,Upper Body,Push,"Deltoids, Triceps","Start in a downward dog position with your hips raised. Lower your head towards the floor, then push back up."

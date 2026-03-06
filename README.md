@@ -43,11 +43,62 @@ The dataset was generated using ChatGPT and contains 207 records. It serves as t
 
 ## Technologies
 
-- Minsearch - for searching
+- langChain - frameworks for building, testing RAG Application
+
+- Qdrant - As the vector database
 
 - MISTRAl AI as an LLM
 
-* FLASK as the API interface
+- FASTAPI as the API interface
+
+- Streamlit or Telegram for Frontend interaction
+
+- Grafana for logging and monitoring
+
+## Running Qdrant
+
+```bash
+  docker pull qdrant/qdrant
+
+  docker run -p 6333:6333 -p 6334:6334 \
+    -v "$(pwd)/qdrant_storage:/qdrant/storage:z" \
+    qdrant/qdrant
+```
+
+## RUNNING THe FASTAPI
+
+To spin up the fastapi application
+
+```bash
+uv run uvicorn api.main:app --reload
+```
+
+To run commands like health check
+
+```bash
+http://127.0.0.1:8000/api/v1/health # For health check and testing connectivity
+
+http://127.0.0.1:8000/api/v1/chat # request to the url
+```
+
+command to run Telegram bot:
+
+```bash
+
+uv run python clients/telegram_bot.py
+```
+
+Running Streamlit another frontend interface
+
+```bash
+uv run streamlit run clients/streamlit.py
+```
+
+kill all pytyhon instances/task
+
+```bash
+ taskkill /F /IM python.exe
+```
 
 ## Preparing the application
 
@@ -118,14 +169,21 @@ When the application is running, you can use [requests](https://requests.readthe
   uv run python test.py
 ```
 
-## MISC
+command to run Telegram bot:
+
+```bash
+
+uv run python clients/telegram_bot.py
+```
+
+## MISC(Using the command line)
 
 ```bash
 URL="http://127.0.0.1:8000"
 
-DATA='{"question":"I want some core excercises that also helps my back"}'
+DATA='{"query":"I want some core excercises that also helps my back", "source":"cmd"}'
 
-curl -X POST ${URL}/question \
+curl -X POST ${URL}/api/v1/chat \
 -H "Content-Type: application/json" \
 -d "${DATA}"
 ```
@@ -220,10 +278,12 @@ Its accessible at (http://localhost:3000/)
 
 ### Containerization
 
+Docker for containerization
+
 ### Reproducibility
 
--m make docker for the application also run tin docker compose automatically
+make docker for the application also run tin docker compose automatically
 
 - include the environment variables
 
-- a cli code to run code too or a frontend
+- Frontend using streamlit (Next up)

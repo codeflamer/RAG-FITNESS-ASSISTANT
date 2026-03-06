@@ -9,3 +9,15 @@ requests
 python-dotenv
 psycopg2-binary
 gunicorn
+langchain-qdrant
+langchain-community
+langchain-mistralai
+qdrant_client
+fastembed
+fastapi[standard]
+uvicorn
+slowapi 
+prometheus-fastapi-instrumentator
+python-telegram-bot
+httpx 
+streamlit
