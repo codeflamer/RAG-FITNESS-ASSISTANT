@@ -63,6 +63,8 @@ The dataset was generated using ChatGPT and contains 207 records. It serves as t
   docker run -p 6333:6333 -p 6334:6334 \
     -v "$(pwd)/qdrant_storage:/qdrant/storage:z" \
     qdrant/qdrant
+
+  docker-compose up
 ```
 
 ## RUNNING THe FASTAPI

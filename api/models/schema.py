@@ -4,6 +4,7 @@ from typing import Literal
 class ChatRequest(BaseModel):
     query: str
     source: Literal["telegram", "streamlit","cmd"]
+    user:str
 
 class ChatResponse(BaseModel):
     answer: dict
@@ -16,3 +17,4 @@ class HealthResponse(BaseModel):
 class ChatRequestFeedback(BaseModel):
     feedback: str
     source: str
+    conversation_id:str

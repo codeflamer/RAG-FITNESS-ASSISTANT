@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Request
 from api.models.schema import ChatRequest, ChatResponse, ChatRequestFeedback
+from fitness_application import db 
 # from api.middleware.throttle import limiter
 
 router = APIRouter()
@@ -8,6 +9,12 @@ router = APIRouter()
 async def feedback(request:Request, body:ChatRequestFeedback):
     try:
         print(f"request received: {body}")
+        # Save feedback
+        db.save_feedback(
+            body.conversation_id,
+            1 if body.feedback == "relevant" else -1
+        )
+
         if body.feedback == "relevant":
             return ChatResponse(answer={"code":200, "response":"Successfuly received relevant feedback"}, source=body.source)
         else:

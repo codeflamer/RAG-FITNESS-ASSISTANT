@@ -3,10 +3,17 @@ from fastapi import FastAPI
 # from slowapi.errors import RateLimitExceeded
 # from slowapi.middleware import SlowAPIMiddleware
 # from starlette.responses import JSONResponse
-
+# from prometheus_fastapi_instrumentator import Instrumentator
 # from api.middleware.throttle import limiter
 from api.routes import chat, health, feedback
-# from prometheus_fastapi_instrumentator import Instrumentator
+
+from dotenv import load_dotenv
+load_dotenv()
+
+from fitness_application import db
+print("Initializing database...")
+db.init_db()
+print("✓ Database initialized")
 
 app = FastAPI(title="Fitness Assistant API", version="1.0.0")
 

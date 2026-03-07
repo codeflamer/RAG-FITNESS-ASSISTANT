@@ -8,6 +8,7 @@ from langchain_mistralai.chat_models import ChatMistralAI
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
+from langchain_core.output_parsers import JsonOutputParser
 
 from fitness_application import retriever
 from fitness_application import lngest_data
@@ -65,6 +66,7 @@ def format_docs(docs):
 
 
 def format_response(response):
+    print(type(response))
     image_urls = re.findall(r'\[IMAGE: (.*?)\]', response)
     clean_answer = re.sub(r'\[IMAGE: .*?\]', '', response).strip()
     
@@ -74,8 +76,64 @@ def format_response(response):
     }
 
 
+def calculate_query_cost(input_tokens, output_tokens):
+    COST_PER_1M_INPUT = 0.2   # $0.2 per 1M input tokens
+    COST_PER_1M_OUTPUT = 0.6  # $0.6 per 1M output tokens
+
+    input_cost = (input_tokens / 1_000_000) * COST_PER_1M_INPUT
+    output_cost = (output_tokens / 1_000_000) * COST_PER_1M_OUTPUT
+    total_cost = input_cost + output_cost
+
+    return total_cost
+
+
+def evaluate_response(query, response, llm):
+    prompt_template = """ 
+    Your role is to act as an LLM judge to evaluator for a RAG system on fitness.
+    Your job is to analyze the relevance of the generated answer to the given question.
+    Based on the relevance of the generated answer, you will classify it
+    as "NON_RELEVANT", "PARTLY_RELEVANT", or "RELEVANT".
+
+    Here is the data for evaluation:
+
+    Question: {question}
+    Generated Answer: {answer_llm}
+
+    Please analyze the content and context of the generated answer in relation to the question
+    and provide your evaluation in parsable JSON without using code blocks:
+
+    {{
+    "Relevance": "NON_RELEVANT"  | "RELEVANT",
+    "Explanation": "[Provide a brief explanation for your evaluation]"
+    }}
+    """
+
+    prompt = ChatPromptTemplate.from_template(prompt_template)
+    formatted_prompt = prompt.invoke({"question":query, "answer_llm":response})
+    response = llm.invoke(formatted_prompt)
+
+    ## parse json
+    parser = JsonOutputParser()
+    parsed_answer = parser.invoke(response)
+
+    # Extract token info
+    eval_input_tokens = response.usage_metadata["input_tokens"]
+    eval_output_tokens = response.usage_metadata["output_tokens"]
+    eval_total_tokens = response.usage_metadata["total_tokens"]
+
+    eval_cost = calculate_query_cost(eval_input_tokens, eval_output_tokens)
+
+    return {
+        "relevance":parsed_answer["Relevance"],
+        "relevance_explanation":parsed_answer["Explanation"],
+        "eval_input_tokens":eval_input_tokens,
+        "eval_output_tokens":eval_output_tokens,
+        "eval_total_tokens":eval_total_tokens,
+        "eval_cost":eval_cost
+    }
 
 async def get_answer(user_query):
+    t0 = time.time()
     print("============RAG OPERATION STARTED================================")
     documents = lngest_data.lngest_data()
 
@@ -84,22 +142,39 @@ async def get_answer(user_query):
     prompt = get_prompt()
     llm = ChatMistralAI(model_name="mistral-large-latest",temperature = 0)
 
-    rag_chain = (
+    context_chain = (
         {"context": client_retriever | format_docs, "question": RunnablePassthrough()}
         | prompt
-        | llm
-        | StrOutputParser()
     )
-
     print("============RUNNING QUERY================================")
-    
-    response = rag_chain.invoke(user_query)
-    formatted_response = format_response(response)
+    formatted_prompt = context_chain.invoke(user_query)
+    response = llm.invoke(formatted_prompt)
 
-    # print(formatted_response)
+    ## Tokens
+    input_tokens = response.usage_metadata["input_tokens"]
+    output_tokens = response.usage_metadata["output_tokens"]
+    total_tokens = response.usage_metadata["total_tokens"]
 
-    return formatted_response
+    formatted_answer = format_response(response.content)
 
+    t1 = time.time()
+    took = t1-t0
+
+    ## Cost for every query
+    total_cost = calculate_query_cost(input_tokens, output_tokens)
+
+    other_info = {
+        "response_time": took,
+        "model_used":"mistral-medium-latest",
+        "input_tokens":input_tokens,
+        "output_tokens":output_tokens,
+        "total_tokens":total_tokens,
+        "cost":total_cost
+    }
+    formatted_answer.update(other_info)
+    eval_details = evaluate_response(user_query, response, llm)
+    formatted_answer.update(eval_details)
+    return formatted_answer
 
 
 
