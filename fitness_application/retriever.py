@@ -4,14 +4,20 @@ from qdrant_client.http.models import Distance, VectorParams
 from langchain_qdrant import QdrantVectorStore
 from uuid import uuid4
 import os
+from dotenv import load_dotenv
+
+load_dotenv()
+
 os.environ["NO_PROXY"] = "localhost,127.0.0.1"
 os.environ["no_proxy"] = "localhost,127.0.0.1"  
 
 model_name = "BAAI/bge-large-en-v1.5"
 embeddings = FastEmbedEmbeddings(model_name=model_name, parallel=0)
 
+QDRANT_URL = os.getenv("QDRANT_URL", "http://127.0.0.1:6333")
+
 def load_collection(documents):
-    client = QdrantClient(url="http://localhost:6333")
+    client = QdrantClient(url=QDRANT_URL)
 
     collection_name = "fitness_collection_instruction"
 

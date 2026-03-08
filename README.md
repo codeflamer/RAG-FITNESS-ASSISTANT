@@ -32,6 +32,7 @@ various exercises, including:
 - **Exercise Name:** The name of the exercise (e.g., Push-Ups, Squats).
 - **Type of Activity:** The general category of the exercise (e.g., Strength, Mobility, Cardio).
 - **Type of Equipment:** The equipment needed for the exercise (e.g., Bodyweight, Dumbbells, Kettlebell).
+- **Type of Equipment:** The images of some equipment needed for the exercise (e.g., Bodyweight, Dumbbells, Kettlebell).
 - **Body Part:** The part of the body primarily targeted by the exercise (e.g., Upper Body, Core, Lower Body).
 - **Type:** The movement type (e.g., Push, Pull, Hold, Stretch).
 - **Muscle Groups Activated:** The specific muscles engaged during
@@ -81,6 +82,8 @@ To run commands like health check
 http://127.0.0.1:8000/api/v1/health # For health check and testing connectivity
 
 http://127.0.0.1:8000/api/v1/chat # request to the url
+
+docker exec -it llm-fitness-postgres-1 psql -U username -d fitness_database
 ```
 
 command to run Telegram bot:
@@ -100,6 +103,13 @@ kill all pytyhon instances/task
 
 ```bash
  taskkill /F /IM python.exe
+```
+
+```bash
+docker compose up
+
+docker build -t fitness-app .
+docker run -p 8000:8000 --network llm-fitness_app-network --env-file .env fitness-app
 ```
 
 ## Preparing the application

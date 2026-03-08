@@ -1,14 +1,14 @@
 from fastapi import APIRouter, Request
 from api.models.schema import ChatRequest, ChatResponse
-# from api.middleware.throttle import limiter
 from fitness_application.rag import get_answer
 import uuid
 from fitness_application import db 
+from api.middleware.throttle import limiter
 
 router = APIRouter()
 
 @router.post("/chat", response_model=ChatResponse)
-# @limiter.limit("5/minute")
+@limiter.limit("2/minute")
 async def chat(request:Request, body: ChatRequest):
     try:
         answer = await get_answer(body.query)
@@ -25,8 +25,7 @@ async def chat(request:Request, body: ChatRequest):
             "answer":f'{answer["message"] + "/n".join(answer["image_urls"])}',
             "interface":body.source,
             "user":body.user,
-            **answer
-            
+            **answer  
         }
         db.save_conversation(
             conversation_id=conversation_id, 

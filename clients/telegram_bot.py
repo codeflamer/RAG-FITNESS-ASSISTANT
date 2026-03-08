@@ -22,6 +22,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     user = update.effective_user
     username = user.username if user.username else f"{user.first_name} {user.last_name}"
+    user_id = str(update.effective_user.id)
 
     await update.message.reply_text("Searching for exercises... 💪")
 
@@ -29,6 +30,7 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
         async with httpx.AsyncClient(timeout=120) as client:
             response = await client.post(
                 f"{FASTAPI_URL}/api/v1/chat",
+                headers={"X-User-ID": user_id},
                 json={"query": user_message, "source": "telegram", "user":username}
             )
             data = response.json()
