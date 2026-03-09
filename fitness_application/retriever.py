@@ -15,7 +15,7 @@ model_name = "BAAI/bge-large-en-v1.5"
 embeddings = FastEmbedEmbeddings(model_name=model_name, parallel=0)
 
 QDRANT_URL = os.getenv("QDRANT_URL", "http://127.0.0.1:6333")
-QDRANT_API_KEY = os.get_env("QDRANT_API_KEY", "")
+QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 
 def load_collection(documents):
     client = QdrantClient(
