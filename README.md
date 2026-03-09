@@ -2,6 +2,8 @@
 
 Staying consistent with fitness routines is challenging, especially for beginners. Gyms can be intimidating, and personal trainers are not always available or affordable. The Fitness Assistant solves this by providing a conversational AI that gives personalised exercise recommendations, step-by-step instructions, and equipment-aware alternatives — on demand, through natural language.
 
+Interact with the assistant directly on Telegram: **@anonymouss**
+
 ---
 
 ## Table of Contents
@@ -12,18 +14,16 @@ Staying consistent with fitness routines is challenging, especially for beginner
 - [Technologies](#technologies)
 - [Prerequisites](#prerequisites)
 - [Environment Setup](#environment-setup)
-- [Running with Docker (Recommended)](#running-with-docker-recommended)
-- [Running without Docker](#running-without-docker)
+- [Running Locally](#running-locally)
+- [Deployment](#deployment)
 - [API Reference](#api-reference)
-- [Frontend Interfaces](#frontend-interfaces)
-- [Monitoring](#monitoring)
 - [Evaluation](#evaluation)
 
 ---
 
 ## Project Overview
 
-The Fitness Assistant is a Retrieval-Augmented Generation (RAG) application. When a user asks a fitness question, the system retrieves relevant exercise records from a vector database (Qdrant) and feeds them as context to a Mistral AI language model, which generates a grounded, accurate response.
+The Fitness Assistant is a Retrieval-Augmented Generation (RAG) application. When a user sends a fitness question via Telegram, the system retrieves the most relevant exercise records from a vector database and feeds them as context to a Mistral AI language model, which generates a grounded, accurate response.
 
 The main use cases are:
 
@@ -37,30 +37,35 @@ The main use cases are:
 ## Architecture
 
 ```
-User (Telegram / Streamlit / curl)
-        │
-        ▼
-  FastAPI Application  (port 8000)
-        │
-        ├──► Qdrant Vector Store  ──► Exercise documents (embeddings)
-        │         retrieval
-        │
-        ├──► Mistral AI (LLM)     ──► Response generation + LLM-as-judge evaluation
-        │
-        └──► PostgreSQL           ──► Conversation & feedback storage
-                │
-                ▼
-           Grafana Dashboard  (port 3000)
+User (Telegram)
+      │
+      ▼
+Telegram Bot  (Railway — Dockerfile.telegram)
+      │
+      │  HTTP (internal)
+      ▼
+FastAPI Application  (Railway)
+      │
+      ├──► Qdrant Cloud  ──► Exercise documents (vector embeddings)
+      │         retrieval
+      │
+      ├──► Mistral AI    ──► Response generation + LLM-as-judge evaluation
+      │
+      └──► PostgreSQL    ──► Conversation & feedback storage
+               │
+               ▼
+         Grafana Cloud   (private monitoring)
 ```
 
 **Request flow:**
 
-1. User sends a query via Telegram, Streamlit, or directly via the API.
-2. The query is embedded and used to retrieve the top-5 most relevant exercise documents from Qdrant (MMR search).
-3. Retrieved documents + the user query are passed to Mistral AI, which generates a response.
-4. The response is evaluated for relevance by a second LLM-as-judge call.
-5. The conversation, token usage, cost, and relevance score are saved to PostgreSQL.
-6. Grafana reads from PostgreSQL to display live monitoring metrics.
+1. User sends a message to the Telegram bot.
+2. The bot forwards the query to the FastAPI backend.
+3. The query is embedded and used to retrieve the top-5 most relevant exercise documents from Qdrant (MMR search).
+4. Retrieved documents and the user query are passed to Mistral AI, which generates a response.
+5. The response is evaluated for relevance by a second LLM-as-judge call.
+6. The conversation, token usage, cost, and relevance score are saved to PostgreSQL.
+7. The bot sends the response back to the user with thumbs-up / thumbs-down feedback buttons.
 
 ---
 
@@ -85,30 +90,31 @@ The dataset is stored at `data/data_clean.csv` and is loaded into Qdrant on firs
 
 ## Technologies
 
-| Component        | Technology                                                                     |
-| ---------------- | ------------------------------------------------------------------------------ |
-| LLM              | [Mistral AI](https://mistral.ai) (`mistral-large-latest`)                      |
-| RAG Framework    | [LangChain](https://www.langchain.com/)                                        |
-| Vector Database  | [Qdrant](https://qdrant.tech/)                                                 |
-| Embeddings       | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5`    |
-| API              | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
-| Database         | [PostgreSQL 13](https://www.postgresql.org/)                                   |
-| Monitoring       | [Grafana](https://grafana.com/)                                                |
-| Telegram Client  | [python-telegram-bot](https://python-telegram-bot.org/)                        |
-| Streamlit Client | [Streamlit](https://streamlit.io/)                                             |
-| Rate Limiting    | [SlowAPI](https://github.com/laurentS/slowapi)                                 |
-| Containerisation | [Docker](https://www.docker.com/) + Docker Compose                             |
-| Package Manager  | [uv](https://github.com/astral-sh/uv)                                          |
+| Component       | Technology                                                                     |
+| --------------- | ------------------------------------------------------------------------------ |
+| LLM             | [Mistral AI](https://mistral.ai) (`mistral-large-latest`)                      |
+| RAG Framework   | [LangChain](https://www.langchain.com/)                                        |
+| Vector Database | [Qdrant Cloud](https://qdrant.tech/)                                           |
+| Embeddings      | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5`   |
+| API             | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
+| Database        | [PostgreSQL](https://www.postgresql.org/) (Railway managed)                    |
+| Monitoring      | [Grafana Cloud](https://grafana.com/) (private)                                |
+| Telegram Client | [python-telegram-bot](https://python-telegram-bot.org/)                        |
+| Rate Limiting   | [SlowAPI](https://github.com/laurentS/slowapi)                                 |
+| Hosting         | [Railway](https://railway.app/)                                                |
+| Containerisation| [Docker](https://www.docker.com/)                                              |
+| Package Manager | [uv](https://github.com/astral-sh/uv)                                         |
 
 ---
 
 ## Prerequisites
 
-- [Docker](https://docs.docker.com/get-docker/) and Docker Compose
+- [Docker](https://docs.docker.com/get-docker/) and Docker Compose (for local development)
 - [uv](https://github.com/astral-sh/uv) (for running without Docker)
 - A [Mistral AI API key](https://console.mistral.ai/)
-- A [Telegram Bot token](https://core.telegram.org/bots#botfather) (only if using the Telegram interface)
-- A [HuggingFace token](https://huggingface.co/settings/tokens) (for downloading embeddings model)
+- A [Telegram Bot token](https://core.telegram.org/bots#botfather)
+- A [HuggingFace token](https://huggingface.co/settings/tokens)
+- A [Qdrant Cloud](https://cloud.qdrant.io/) cluster and API key (free tier)
 
 ---
 
@@ -133,116 +139,37 @@ FASTAPI_URL=http://127.0.0.1:8000
 APP_PORT=8000
 
 # PostgreSQL
-POSTGRES_HOST=postgres
-POSTGRES_DB=fitness_database
+POSTGRES_HOST=your_postgres_host
+POSTGRES_DB=your_database_name
 POSTGRES_USER=your_username
 POSTGRES_PASSWORD=your_strong_password
 POSTGRES_PORT=5432
 
 # Qdrant
-QDRANT_URL=http://qdrant:6333
+QDRANT_URL=https://your-cluster.qdrant.io
+QDRANT_API_KEY=your_qdrant_api_key
 
 # Data
 DATA_PATH=./data/data_clean.csv
-
-# Grafana
-GRAFANA_URL=http://localhost:3000
-GRAFANA_ADMIN_USER=admin
-GRAFANA_ADMIN_PASSWORD=your_strong_grafana_password
-GRAFANA_SECRET_KEY=your_random_secret_key
 ```
 
 > **Never commit your `.env` file.** It is already listed in `.gitignore`.
 
 ---
 
-## Running with Docker (Recommended)
+## Running Locally
 
-Docker Compose starts all services — PostgreSQL, Qdrant, the FastAPI app, and Grafana — in the correct order with a single command.
-
-### Start all services
+### 1. Install uv
 
 ```bash
-docker-compose up
-```
-
-To run in the background:
-
-```bash
-docker-compose up -d
-```
-
-### Service URLs
-
-| Service            | URL                        |
-| ------------------ | -------------------------- |
-| FastAPI            | http://localhost:8000      |
-| API Docs (Swagger) | http://localhost:8000/docs |
-| Grafana            | http://localhost:3000      |
-
-### Initialise Grafana
-
-After all services are running, set up the Grafana datasource and dashboard:
-
-```bash
-cd grafana
-uv run python init.py
-```
-
-This creates a PostgreSQL datasource and imports the pre-built monitoring dashboard automatically.
-
-### Start the Telegram bot
-
-The Telegram bot runs as a separate process outside Docker:
-
-```bash
-uv run python clients/telegram_bot.py
-```
-
-### Start the Streamlit interface
-
-```bash
-uv run streamlit run clients/streamlit.py
-```
-
-### Rebuild after code changes
-
-```bash
-docker-compose up --build
-```
-
-### Stop all services
-
-```bash
-docker-compose down
-```
-
-To also remove stored data volumes:
-
-```bash
-docker-compose down -v
-```
-
----
-
-## Running without Docker
-
-### 1. Install Python and uv
-
-```bash
-# Install uv if not already installed
 pip install uv
 ```
 
-### 2. Create a virtual environment
+### 2. Create and activate a virtual environment
 
 ```bash
 uv venv
-```
 
-Activate it:
-
-```bash
 # Windows
 source .venv/Scripts/activate
 
@@ -256,19 +183,16 @@ source .venv/bin/activate
 uv pip install -r requirements.txt
 ```
 
-### 4. Start PostgreSQL and Qdrant
-
-You still need running instances of PostgreSQL and Qdrant. The easiest way is to start just those two services with Docker:
+### 4. Start PostgreSQL with Docker
 
 ```bash
-docker-compose up postgres qdrant -d
+docker-compose up postgres -d
 ```
 
-Update your `.env` to point to `localhost` instead of the Docker service names:
+Update your `.env` to use localhost:
 
 ```env
 POSTGRES_HOST=localhost
-QDRANT_URL=http://localhost:6333
 ```
 
 ### 5. Start the FastAPI application
@@ -279,19 +203,15 @@ uv run uvicorn api.main:app --reload
 
 The database tables are created automatically on first startup.
 
-### 6. Start the Telegram bot (optional)
+### 6. Start the Telegram bot
 
 ```bash
 uv run python clients/telegram_bot.py
 ```
 
-### 7. Start the Streamlit interface (optional)
+Open Telegram, find your bot, and send a fitness question to test it.
 
-```bash
-uv run streamlit run clients/streamlit.py
-```
-
-### 8. Test the application
+### 7. Run tests
 
 ```bash
 uv run python test.py
@@ -299,7 +219,73 @@ uv run python test.py
 
 ---
 
+## Deployment
+
+The application is hosted on [Railway](https://railway.app/) across two services backed by managed infrastructure.
+
+### Infrastructure overview
+
+| Service         | Platform              | Notes                              |
+| --------------- | --------------------- | ---------------------------------- |
+| FastAPI app     | Railway               | Built from `Dockerfile`            |
+| Telegram bot    | Railway               | Built from `Dockerfile.telegram`   |
+| PostgreSQL      | Railway managed       | Connected via internal variables   |
+| Qdrant          | Qdrant Cloud free     | Connected via `QDRANT_URL`         |
+| Monitoring      | Grafana Cloud         | Private, reads from Railway Postgres |
+
+### Setting up on Railway
+
+**1. Create a Railway project and connect your GitHub repo.**
+
+**2. Add a managed PostgreSQL database:**
+- In your project → **"+ New Service"** → **"Database"** → **"PostgreSQL"**
+- Railway generates connection variables automatically.
+
+**3. Configure the FastAPI app service variables:**
+
+```
+MISTRAL_API_KEY=your_mistral_api_key
+HF_TOKEN=your_huggingface_token
+DATA_PATH=./data/data_clean.csv
+QDRANT_URL=https://your-cluster.qdrant.io
+QDRANT_API_KEY=your_qdrant_api_key
+POSTGRES_HOST=${{Postgres.PGHOST}}
+POSTGRES_PORT=${{Postgres.PGPORT}}
+POSTGRES_DB=${{Postgres.PGDATABASE}}
+POSTGRES_USER=${{Postgres.PGUSER}}
+POSTGRES_PASSWORD=${{Postgres.PGPASSWORD}}
+```
+
+**4. Add the Telegram bot as a second Railway service:**
+- **"+ New Service"** → **"GitHub Repo"** → same repo
+- In **Settings → Build → Dockerfile Path** set to: `Dockerfile.telegram`
+- Set variables on the bot service:
+
+```
+TELEGRAM_TOKEN=your_telegram_bot_token
+FASTAPI_URL=http://${{app.RAILWAY_PRIVATE_DOMAIN}}:8000
+```
+
+> The bot communicates with the FastAPI app over Railway's private internal network — the API is never exposed publicly.
+
+**5. Set up Qdrant Cloud:**
+- Create a free cluster at [cloud.qdrant.io](https://cloud.qdrant.io)
+- Copy the cluster URL and API key into the Railway app service variables above.
+
+### Creating a Telegram bot
+
+If you need to create a new Telegram bot:
+
+1. Open Telegram and search for **@BotFather**
+2. Send `/newbot` and follow the prompts
+3. BotFather will give you a token — add it as `TELEGRAM_TOKEN` in your Railway bot service variables
+4. Optionally send `/setdescription` and `/setuserpic` to customise the bot's profile
+
+---
+
 ## API Reference
+
+The API is not publicly exposed. All interaction goes through the Telegram bot. The endpoints below are for local development only.
 
 ### Health check
 
@@ -349,52 +335,6 @@ Accepted `feedback` values: `"relevant"` or `"not_relevant"`.
 ### Rate limiting
 
 All endpoints are rate-limited to **2 requests per minute** per IP address.
-
-### Interactive API docs
-
-Full Swagger UI is available at:
-
-```
-http://localhost:8000/docs
-```
-
----
-
-## Frontend Interfaces
-
-### Telegram Bot
-
-After starting the bot with `uv run python clients/telegram_bot.py`, open your bot in Telegram and send any fitness-related message. The bot will:
-
-1. Forward your message to the FastAPI backend.
-2. Reply with the generated answer and any exercise images.
-3. Present thumbs-up / thumbs-down feedback buttons.
-
-### Streamlit
-
-After starting Streamlit, open http://localhost:8501 in your browser. The interface provides a chat window, displays exercise images inline, and allows you to submit relevance feedback.
-
----
-
-## Monitoring
-
-Grafana is available at http://localhost:3000 after running `grafana/init.py`.
-
-The dashboard includes:
-
-- Total conversations over time
-- Average response time
-- Token usage and estimated Mistral API cost per query
-- Relevance score distribution (RELEVANT / PARTLY_RELEVANT / NON_RELEVANT)
-- Thumbs-up vs thumbs-down feedback ratio
-
-Log into Grafana with the credentials set in your `.env` (`GRAFANA_ADMIN_USER` / `GRAFANA_ADMIN_PASSWORD`).
-
-To inspect the database directly:
-
-```bash
-docker exec -it llm-fitness-postgres-1 psql -U your_username -d fitness_database
-```
 
 ---
 
