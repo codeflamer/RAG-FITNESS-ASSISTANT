@@ -349,27 +349,25 @@ All endpoints are rate-limited to **2 requests per minute** per IP address.
 
 Retrieval quality was measured using Hit Rate and Mean Reciprocal Rank (MRR) on a set of generated ground-truth question–document pairs.
 
-| Approach                           | Hit Rate         | MRR              |
-| ---------------------------------- | ---------------- | ---------------- |
-| Baseline (no boosting)             | <!-- fill in --> | <!-- fill in --> |
-| Optimised (MMR, bge-large-en-v1.5) | <!-- fill in --> | <!-- fill in --> |
+| Approach                           | Hit Rate | MRR  |
+| ---------------------------------- | -------- | ---- |
+| Optimised (MMR, bge-large-en-v1.5) | 0.726    | 0.71 |
 
 ### RAG — LLM-as-Judge
 
 Each generated response is automatically evaluated for relevance by a second Mistral AI call acting as a judge. Results across the evaluation set:
 
-| Label           | Count            | Percentage       |
-| --------------- | ---------------- | ---------------- |
-| RELEVANT        | <!-- fill in --> | <!-- fill in --> |
-| PARTLY_RELEVANT | <!-- fill in --> | <!-- fill in --> |
-| NON_RELEVANT    | <!-- fill in --> | <!-- fill in --> |
-| **Total**       | <!-- fill in --> | 100%             |
+| Label        | Count | Percentage |
+| ------------ | ----- | ---------- |
+| RELEVANT     | 186   | 0.9        |
+| NON_RELEVANT | 21    | 0.1        |
+| **Total**    | 207   | 100%       |
 
 ### User Feedback
 
 Feedback collected from real interactions via the thumbs-up / thumbs-down buttons:
 
-| Signal                     | Count            |
-| -------------------------- | ---------------- |
-| Thumbs up (relevant)       | <!-- fill in --> |
-| Thumbs down (not relevant) | <!-- fill in --> |
+| Signal                     | Count                 |
+| -------------------------- | --------------------- |
+| Thumbs up (relevant)       | <!-- To Be filled --> |
+| Thumbs down (not relevant) | <!-- To be filled --> |
