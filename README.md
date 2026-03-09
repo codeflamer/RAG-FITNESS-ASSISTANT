@@ -54,6 +54,7 @@ User (Telegram / Streamlit / curl)
 ```
 
 **Request flow:**
+
 1. User sends a query via Telegram, Streamlit, or directly via the API.
 2. The query is embedded and used to retrieve the top-5 most relevant exercise documents from Qdrant (MMR search).
 3. Retrieved documents + the user query are passed to Mistral AI, which generates a response.
@@ -67,16 +68,16 @@ User (Telegram / Streamlit / curl)
 
 The dataset contains 207 exercise records generated with ChatGPT. Each record includes:
 
-| Field | Description |
-|---|---|
-| `exercise_name` | Name of the exercise (e.g., Push-Ups, Squats) |
-| `type_of_activity` | General category (e.g., Strength, Mobility, Cardio) |
-| `type_of_equipment` | Equipment required (e.g., Bodyweight, Dumbbells, Kettlebell) |
-| `body_part` | Primary body area targeted (e.g., Upper Body, Core, Lower Body) |
-| `type` | Movement type (e.g., Push, Pull, Hold, Stretch) |
+| Field                     | Description                                                     |
+| ------------------------- | --------------------------------------------------------------- |
+| `exercise_name`           | Name of the exercise (e.g., Push-Ups, Squats)                   |
+| `type_of_activity`        | General category (e.g., Strength, Mobility, Cardio)             |
+| `type_of_equipment`       | Equipment required (e.g., Bodyweight, Dumbbells, Kettlebell)    |
+| `body_part`               | Primary body area targeted (e.g., Upper Body, Core, Lower Body) |
+| `type`                    | Movement type (e.g., Push, Pull, Hold, Stretch)                 |
 | `muscle_groups_activated` | Specific muscles engaged (e.g., Pectorals, Triceps, Quadriceps) |
-| `instructions` | Step-by-step instructions for correct form |
-| `image_url` | URL of an equipment/exercise image where available |
+| `instructions`            | Step-by-step instructions for correct form                      |
+| `image_url`               | URL of an equipment/exercise image where available              |
 
 The dataset is stored at `data/data_clean.csv` and is loaded into Qdrant on first startup.
 
@@ -84,20 +85,20 @@ The dataset is stored at `data/data_clean.csv` and is loaded into Qdrant on firs
 
 ## Technologies
 
-| Component | Technology |
-|---|---|
-| LLM | [Mistral AI](https://mistral.ai) (`mistral-large-latest`) |
-| RAG Framework | [LangChain](https://www.langchain.com/) |
-| Vector Database | [Qdrant](https://qdrant.tech/) |
-| Embeddings | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5` |
-| API | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
-| Database | [PostgreSQL 13](https://www.postgresql.org/) |
-| Monitoring | [Grafana](https://grafana.com/) |
-| Telegram Client | [python-telegram-bot](https://python-telegram-bot.org/) |
-| Streamlit Client | [Streamlit](https://streamlit.io/) |
-| Rate Limiting | [SlowAPI](https://github.com/laurentS/slowapi) |
-| Containerisation | [Docker](https://www.docker.com/) + Docker Compose |
-| Package Manager | [uv](https://github.com/astral-sh/uv) |
+| Component        | Technology                                                                     |
+| ---------------- | ------------------------------------------------------------------------------ |
+| LLM              | [Mistral AI](https://mistral.ai) (`mistral-large-latest`)                      |
+| RAG Framework    | [LangChain](https://www.langchain.com/)                                        |
+| Vector Database  | [Qdrant](https://qdrant.tech/)                                                 |
+| Embeddings       | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5`    |
+| API              | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
+| Database         | [PostgreSQL 13](https://www.postgresql.org/)                                   |
+| Monitoring       | [Grafana](https://grafana.com/)                                                |
+| Telegram Client  | [python-telegram-bot](https://python-telegram-bot.org/)                        |
+| Streamlit Client | [Streamlit](https://streamlit.io/)                                             |
+| Rate Limiting    | [SlowAPI](https://github.com/laurentS/slowapi)                                 |
+| Containerisation | [Docker](https://www.docker.com/) + Docker Compose                             |
+| Package Manager  | [uv](https://github.com/astral-sh/uv)                                          |
 
 ---
 
@@ -173,11 +174,11 @@ docker-compose up -d
 
 ### Service URLs
 
-| Service | URL |
-|---|---|
-| FastAPI | http://localhost:8000 |
+| Service            | URL                        |
+| ------------------ | -------------------------- |
+| FastAPI            | http://localhost:8000      |
 | API Docs (Swagger) | http://localhost:8000/docs |
-| Grafana | http://localhost:3000 |
+| Grafana            | http://localhost:3000      |
 
 ### Initialise Grafana
 
@@ -307,7 +308,7 @@ GET http://localhost:8000/api/v1/health
 ```
 
 ```json
-{"status": "ok", "version": "1.0.0"}
+{ "status": "ok", "version": "1.0.0" }
 ```
 
 ### Send a chat query
@@ -403,27 +404,27 @@ docker exec -it llm-fitness-postgres-1 psql -U your_username -d fitness_database
 
 Retrieval quality was measured using Hit Rate and Mean Reciprocal Rank (MRR) on a set of generated ground-truth question–document pairs.
 
-| Approach | Hit Rate | MRR |
-|---|---|---|
-| Baseline (no boosting) | <!-- fill in --> | <!-- fill in --> |
+| Approach                           | Hit Rate         | MRR              |
+| ---------------------------------- | ---------------- | ---------------- |
+| Baseline (no boosting)             | <!-- fill in --> | <!-- fill in --> |
 | Optimised (MMR, bge-large-en-v1.5) | <!-- fill in --> | <!-- fill in --> |
 
 ### RAG — LLM-as-Judge
 
 Each generated response is automatically evaluated for relevance by a second Mistral AI call acting as a judge. Results across the evaluation set:
 
-| Label | Count | Percentage |
-|---|---|---|
-| RELEVANT | <!-- fill in --> | <!-- fill in --> |
+| Label           | Count            | Percentage       |
+| --------------- | ---------------- | ---------------- |
+| RELEVANT        | <!-- fill in --> | <!-- fill in --> |
 | PARTLY_RELEVANT | <!-- fill in --> | <!-- fill in --> |
-| NON_RELEVANT | <!-- fill in --> | <!-- fill in --> |
-| **Total** | <!-- fill in --> | 100% |
+| NON_RELEVANT    | <!-- fill in --> | <!-- fill in --> |
+| **Total**       | <!-- fill in --> | 100%             |
 
 ### User Feedback
 
 Feedback collected from real interactions via the thumbs-up / thumbs-down buttons:
 
-| Signal | Count |
-|---|---|
-| Thumbs up (relevant) | <!-- fill in --> |
+| Signal                     | Count            |
+| -------------------------- | ---------------- |
+| Thumbs up (relevant)       | <!-- fill in --> |
 | Thumbs down (not relevant) | <!-- fill in --> |

@@ -1,21 +1,21 @@
 services:
-  postgres:
-    image: postgres:13
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB:-your_database}
-      POSTGRES_USER: ${POSTGRES_USER:-your_username}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    networks:
-      - app-network
+  # postgres:
+  #   image: postgres:13
+  #   environment:
+  #     POSTGRES_DB: ${POSTGRES_DB:-your_database}
+  #     POSTGRES_USER: ${POSTGRES_USER:-your_username}
+  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  #   volumes:
+  #     - postgres_data:/var/lib/postgresql/data
+  #   networks:
+  #     - app-network
 
-  qdrant:
-    image: qdrant/qdrant
-    volumes:
-      - qdrant_storage:/qdrant/storage
-    networks:
-      - app-network
+  # qdrant:
+  #   image: qdrant/qdrant
+  #   volumes:
+  #     - qdrant_storage:/qdrant/storage
+  #   networks:
+  #     - app-network
 
   app:
     build:
