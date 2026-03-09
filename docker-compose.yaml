@@ -34,7 +34,7 @@ services:
     ports:
       - "${APP_PORT:-8000}:8000"
     depends_on:
-      - postgres
+      # - postgres
       - qdrant
     networks:
       - app-network
@@ -57,12 +57,12 @@ services:
       - GF_USERS_AUTO_ASSIGN_ORG_ROLE=Viewer
       - GF_SECURITY_SECRET_KEY=${GRAFANA_SECRET_KEY}
     depends_on:
-      - postgres
+      # - postgres
     networks:
       - app-network
 
 volumes:
-  postgres_data:
+  # postgres_data:
   grafana_data:
   qdrant_storage:
 
