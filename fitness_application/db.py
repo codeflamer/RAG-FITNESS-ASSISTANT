@@ -17,12 +17,10 @@ def get_db_connection():
     try:
         conn = psycopg2.connect(
             host=os.getenv("POSTGRES_HOST", "postgres"),
-            # host="localhost",
             port=int(os.getenv("POSTGRES_PORT", 5432)),
-            # port=5434,
             database=os.getenv("POSTGRES_DB","your_database"),
-            user=os.getenv("POSTGRES_USER", "username"),
-            password=os.getenv("POSTGRES_PASSWORD", "password"),
+            user=os.getenv("POSTGRES_USER", "your_username"),
+            password=os.getenv("POSTGRES_PASSWORD", "your_password"),
         )
 
         print("SUCCESS: Connected to database!")

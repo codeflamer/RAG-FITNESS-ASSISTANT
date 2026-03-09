@@ -19,7 +19,8 @@ QDRANT_API_KEY = os.getenv("QDRANT_API_KEY", "")
 
 def load_collection(documents):
     client = QdrantClient(
-        url=QDRANT_URL
+        url=QDRANT_URL,
+        api_key=QDRANT_API_KEY
     )
 
     collection_name = "fitness_collection_instruction"
