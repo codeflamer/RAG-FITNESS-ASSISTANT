@@ -1,5 +1,7 @@
 # Fitness Assistant — RAG Application
 
+![Fitness Assistant](image/fitness_desc.png)
+
 Staying consistent with fitness routines is challenging, especially for beginners. Gyms can be intimidating, and personal trainers are not always available or affordable. The Fitness Assistant solves this by providing a conversational AI that gives personalised exercise recommendations, step-by-step instructions, and equipment-aware alternatives — on demand, through natural language.
 
 Interact with the assistant directly on Telegram: **@anonymouss**
@@ -90,20 +92,20 @@ The dataset is stored at `data/data_clean.csv` and is loaded into Qdrant on firs
 
 ## Technologies
 
-| Component       | Technology                                                                     |
-| --------------- | ------------------------------------------------------------------------------ |
-| LLM             | [Mistral AI](https://mistral.ai) (`mistral-large-latest`)                      |
-| RAG Framework   | [LangChain](https://www.langchain.com/)                                        |
-| Vector Database | [Qdrant Cloud](https://qdrant.tech/)                                           |
-| Embeddings      | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5`   |
-| API             | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
-| Database        | [PostgreSQL](https://www.postgresql.org/) (Railway managed)                    |
-| Monitoring      | [Grafana Cloud](https://grafana.com/) (private)                                |
-| Telegram Client | [python-telegram-bot](https://python-telegram-bot.org/)                        |
-| Rate Limiting   | [SlowAPI](https://github.com/laurentS/slowapi)                                 |
-| Hosting         | [Railway](https://railway.app/)                                                |
-| Containerisation| [Docker](https://www.docker.com/)                                              |
-| Package Manager | [uv](https://github.com/astral-sh/uv)                                         |
+| Component        | Technology                                                                     |
+| ---------------- | ------------------------------------------------------------------------------ |
+| LLM              | [Mistral AI](https://mistral.ai) (`mistral-large-latest`)                      |
+| RAG Framework    | [LangChain](https://www.langchain.com/)                                        |
+| Vector Database  | [Qdrant Cloud](https://qdrant.tech/)                                           |
+| Embeddings       | [FastEmbed](https://github.com/qdrant/fastembed) — `BAAI/bge-large-en-v1.5`    |
+| API              | [FastAPI](https://fastapi.tiangolo.com/) + [Uvicorn](https://www.uvicorn.org/) |
+| Database         | [PostgreSQL](https://www.postgresql.org/) (Railway managed)                    |
+| Monitoring       | [Grafana Cloud](https://grafana.com/) (private)                                |
+| Telegram Client  | [python-telegram-bot](https://python-telegram-bot.org/)                        |
+| Rate Limiting    | [SlowAPI](https://github.com/laurentS/slowapi)                                 |
+| Hosting          | [Railway](https://railway.app/)                                                |
+| Containerisation | [Docker](https://www.docker.com/)                                              |
+| Package Manager  | [uv](https://github.com/astral-sh/uv)                                          |
 
 ---
 
@@ -225,19 +227,20 @@ The application is hosted on [Railway](https://railway.app/) across two services
 
 ### Infrastructure overview
 
-| Service         | Platform              | Notes                              |
-| --------------- | --------------------- | ---------------------------------- |
-| FastAPI app     | Railway               | Built from `Dockerfile`            |
-| Telegram bot    | Railway               | Built from `Dockerfile.telegram`   |
-| PostgreSQL      | Railway managed       | Connected via internal variables   |
-| Qdrant          | Qdrant Cloud free     | Connected via `QDRANT_URL`         |
-| Monitoring      | Grafana Cloud         | Private, reads from Railway Postgres |
+| Service      | Platform          | Notes                                |
+| ------------ | ----------------- | ------------------------------------ |
+| FastAPI app  | Railway           | Built from `Dockerfile`              |
+| Telegram bot | Railway           | Built from `Dockerfile.telegram`     |
+| PostgreSQL   | Railway managed   | Connected via internal variables     |
+| Qdrant       | Qdrant Cloud free | Connected via `QDRANT_URL`           |
+| Monitoring   | Grafana Cloud     | Private, reads from Railway Postgres |
 
 ### Setting up on Railway
 
 **1. Create a Railway project and connect your GitHub repo.**
 
 **2. Add a managed PostgreSQL database:**
+
 - In your project → **"+ New Service"** → **"Database"** → **"PostgreSQL"**
 - Railway generates connection variables automatically.
 
@@ -257,6 +260,7 @@ POSTGRES_PASSWORD=${{Postgres.PGPASSWORD}}
 ```
 
 **4. Add the Telegram bot as a second Railway service:**
+
 - **"+ New Service"** → **"GitHub Repo"** → same repo
 - In **Settings → Build → Dockerfile Path** set to: `Dockerfile.telegram`
 - Set variables on the bot service:
@@ -269,6 +273,7 @@ FASTAPI_URL=http://${{app.RAILWAY_PRIVATE_DOMAIN}}:8000
 > The bot communicates with the FastAPI app over Railway's private internal network — the API is never exposed publicly.
 
 **5. Set up Qdrant Cloud:**
+
 - Create a free cluster at [cloud.qdrant.io](https://cloud.qdrant.io)
 - Copy the cluster URL and API key into the Railway app service variables above.
 
