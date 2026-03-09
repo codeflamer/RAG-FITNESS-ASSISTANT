@@ -95,9 +95,7 @@
       "options": {
         "footer": {
           "fields": "",
-          "reducer": [
-            "sum"
-          ],
+          "reducer": ["sum"],
           "show": false
         },
         "showHeader": true,
@@ -113,7 +111,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  question,\r\n  answer,\r\n  relevance\r\nFROM conversations\r\nWHERE timestamp BETWEEN $__timeFrom() AND $__timeTo()\r\nORDER BY timestamp DESC\r\nLIMIT 5\r\n",
+          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  question,\r\n  answer,\r\n  relevance\r\nFROM conversations\r\nORDER BY timestamp DESC\r\nLIMIT 5\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -166,9 +164,7 @@
       },
       "id": 14,
       "options": {
-        "displayLabels": [
-          "percent"
-        ],
+        "displayLabels": ["percent"],
         "legend": {
           "displayMode": "list",
           "placement": "right",
@@ -177,9 +173,7 @@
         },
         "pieType": "pie",
         "reduceOptions": {
-          "calcs": [
-            "lastNotNull"
-          ],
+          "calcs": ["lastNotNull"],
           "fields": "",
           "values": false
         },
@@ -197,7 +191,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  SUM(CASE WHEN feedback > 0 THEN 1 ELSE 0 END) as thumbs_up,\r\n  SUM(CASE WHEN feedback < 0 THEN 1 ELSE 0 END) as thumbs_down\r\nFROM feedback\r\nWHERE timestamp BETWEEN $__timeFrom() AND $__timeTo()\r\n",
+          "rawSql": "SELECT\r\n  SUM(CASE WHEN feedback > 0 THEN 1 ELSE 0 END) as thumbs_up,\r\n  SUM(CASE WHEN feedback < 0 THEN 1 ELSE 0 END) as thumbs_down\r\nFROM feedback\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -276,7 +270,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  relevance,\r\n  COUNT(*) as count\r\nFROM conversations\r\nWHERE timestamp BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY relevance",
+          "rawSql": "SELECT\r\n  relevance,\r\n  COUNT(*) as count\r\nFROM conversations\r\nGROUP BY relevance",
           "refId": "A",
           "sql": {
             "columns": [
@@ -385,7 +379,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  openai_cost\r\nFROM conversations\r\nWHERE openai_cost > 0\r\nORDER BY timestamp\r\n",
+          "rawSql": "SELECT\r\n  timestamp AS time,\r\n  mistralai_cost\r\nFROM conversations\r\nWHERE mistralai_cost > 0\r\nORDER BY timestamp\r\n",
           "refId": "A",
           "sql": {
             "columns": [
@@ -406,7 +400,7 @@
           }
         }
       ],
-      "title": "OpenAI cost",
+      "title": "MistralAI cost",
       "type": "timeseries"
     },
     {
@@ -602,7 +596,7 @@
           "editorMode": "code",
           "format": "table",
           "rawQuery": true,
-          "rawSql": "SELECT\r\n  model_used,\r\n  COUNT(*) as count\r\nFROM conversations\r\nWHERE timestamp BETWEEN $__timeFrom() AND $__timeTo()\r\nGROUP BY model_used\r\n",
+          "rawSql": "SELECT\r\n  model_used,\r\n  COUNT(*) as count\r\nFROM conversations\r\nGROUP BY model_used\r\n",
           "refId": "A",
           "sql": {
             "columns": [
