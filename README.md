@@ -4,7 +4,7 @@
 
 Staying consistent with fitness routines is challenging, especially for beginners. Gyms can be intimidating, and personal trainers are not always available or affordable. The Fitness Assistant solves this by providing a conversational AI that gives personalised exercise recommendations, step-by-step instructions, and equipment-aware alternatives — on demand, through natural language.
 
-Interact with the assistant directly on Telegram: **@anonymouss**
+Interact with the assistant directly on Telegram: [**@codeflamer_bot**](https://t.me/codeflamer_bot)
 
 ---
 
